@@ -2,9 +2,9 @@
 
 ## Fase 1
 
-- [ ] Criar heróis
-- [ ] Criar monstros
-- [ ] Sistema de dados
+- [x] Criar heróis
+- [x] Criar monstros
+- [x] Sistema de dados
 - [ ] Sistema de ataque
 - [ ] Sistema de defesa
 - [ ] Sistema de cura
