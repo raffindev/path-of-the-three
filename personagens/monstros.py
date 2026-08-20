@@ -2,20 +2,26 @@
 
 slime = {
     "Raça": "Slime",
-    "Ataque": 5,
-    "Defesa": 2,
-    "Vida Maxima": 45,
-    "Vida Atual": 45,
-    "Drop": "Poção de Cura", 
+    "Força": 2,
+    "Arma": "Corpo",
+    "Dano da Arma": 3,
+    "Defesa": 3,
+    "Classe de Armadura": 0,
+    "Pontos de Vida Maxima": 20,
+    "Pontos de Vida Atual": 20,
+    "Drop": "Poção de Cura",
     "Drop Porcentagem": 15
 }
 
 goblin = {
     "Raça": "Goblin",
-    "Ataque": 8,
+    "Força": 4,
+    "Arma": "Cimitarra",
+    "Dano da Arma": 4,
     "Defesa": 4,
-    "Vida Maxima": 80,
-    "Vida Atual": 80,
+    "Classe de Armadura": 3,
+    "Pontos de Vida Maxima": 35,
+    "Pontos de Vida Atual": 35,
     "Drop": "Poção de Cura",
     "Drop Porcentagem": 40
 }
