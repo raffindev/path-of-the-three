@@ -3,6 +3,7 @@ from combate.ações import atacar, defender, curar, fugir, drop_item
 from itens.mochilas import mochilas
 from utils.validações import cabeçalho
 from random import choice
+import time
 
 # Estrutura início da batalha
 def iniciar_batalha(herois, monstros_disponiveis):
@@ -21,6 +22,7 @@ def iniciar_batalha(herois, monstros_disponiveis):
 # Estrutura de batalha - Turno do heroi
 def turno_heroi(heroi, monstros_batalha, mochilas):
 
+    time.sleep(0.5)
     print(f'\n⚔️  TURNO DE {heroi["Nome"].upper()}')
     ação = escolher_ação()
 
@@ -35,7 +37,7 @@ def turno_heroi(heroi, monstros_batalha, mochilas):
         return "defesa", defesa_temporaria
 
     elif ação == "3":
-        print("\n❤️ Ação escolhida: Curar")
+        print("\n❤️  Ação escolhida: Curar")
         curar(heroi, mochilas)
 
     elif ação == "4":
@@ -46,6 +48,9 @@ def turno_heroi(heroi, monstros_batalha, mochilas):
 
 # Turno dos monstros
 def turno_monstros(monstros_batalha, herois):
+    time.sleep(0.5)
+
+    print('\n👹 Os monstros se preparam para atacar!')
 
     for monstro in monstros_batalha:
         if monstro["Pontos de Vida Atual"] > 0:

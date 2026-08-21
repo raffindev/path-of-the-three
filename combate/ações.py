@@ -1,10 +1,11 @@
 from combate.dados import d4, d6, d8, d12, d20
 from itens.itens import poção_de_cura
 from itens.mochilas import mochilas
+from utils.validações import cabeçalho, validar_ação
 from random import choice, randint
-from utils.validações import cabeçalho
+import time
 
-# Função Gerar encontro
+# Função Gerar encontro.
 def gerar_encontro(monstros_disponiveis):
 
     quantidade_monstros = randint(1, 4)
@@ -31,20 +32,27 @@ def gerar_encontro(monstros_disponiveis):
 
     return monstros_batalha
 
-# Função Definir Ação
+# Função Definir Ação.
 def escolher_ação():
 
-    print(cabeçalho("AÇÕES"))
-    print("\n1 - Atacar")
-    print("2 - Defender")
-    print("3 - Curar")
-    print("4 - Fugir")
+    while True:
 
-    escolha_ação = input("\nQual será seu próximo movimento: ")
+        print(cabeçalho("AÇÕES"))
+        print("\n1 - Atacar")
+        print("2 - Defender")
+        print("3 - Curar")
+        print("4 - Fugir")
 
-    return escolha_ação
+        escolha_ação = input("\nQual será seu próximo movimento: ")
 
-# Função Escolher Alvo
+        if validar_ação(escolha_ação):
+            return escolha_ação
+
+        print('\n❌ Ação inválida!')
+        print('⚔️ Escolha uma opção entre 1 e 4.')
+        time.sleep(0.8)
+
+# Função Escolher Alvo.
 def escolher_alvo(monstros_batalha):
 
     monstros_vivos = [monstro for monstro in monstros_batalha if monstro["Pontos de Vida Atual"] > 0]
@@ -55,15 +63,20 @@ def escolher_alvo(monstros_batalha):
     for i, monstro in enumerate(monstros_vivos, start=1):
         print(f'{i} - {monstro["Nome"]}')
 
-    grupo_monstro = int(input('\nEscolha seu alvo: '))
-    if 1 <= grupo_monstro <= len(monstros_vivos):
-        monstro_alvo = monstros_vivos[grupo_monstro - 1]
-        print(f'\n🎯 Alvo escolhido: {monstro_alvo["Nome"]} {grupo_monstro}')
-        return grupo_monstro, monstro_alvo
+    while True:
+        try:
+            grupo_monstro = int(input('\nEscolha seu alvo: '))
+            if 1 <= grupo_monstro <= len(monstros_vivos):
+                monstro_alvo = monstros_vivos[grupo_monstro - 1]
+                print(f'\n🎯 Alvo escolhido: {monstro_alvo["Nome"]} {grupo_monstro}')
+                return grupo_monstro, monstro_alvo
 
-    print('⚠️ Alvo inválido!')
+            print('⚠️ Alvo inválido!')
+        except ValueError:
+            print('❌ Movimento inválido!')
+            print('⚔️ Escolha um dos inimigos apresentados pelo número.')
 
-# Função Atacar
+# Função Atacar.
 def atacar(atacante, alvo):
 
     print(f'\n⚔️  {atacante["Nome"]} ataca {alvo["Nome"]}!')
@@ -72,8 +85,11 @@ def atacar(atacante, alvo):
         f'Dano da arma: {atacante["Dano da Arma"]}'
     )
 
+    print('\n🎲 Rolando D12...')
+    time.sleep(0.8)
     rolar_d12 = d12()
-    print(f'\n🎲 Rolando D12... Resultado: {rolar_d12}')
+    print(f'🎲 Resultado: {rolar_d12}')
+
     poder_de_ataque = (
         atacante["Força"]
         + atacante["Dano da Arma"]
@@ -84,9 +100,16 @@ def atacar(atacante, alvo):
     defesa_total = alvo["Defesa"] + alvo["Classe de Armadura"]
     print(f'🛡️  Defesa de {alvo["Nome"]}: {defesa_total}')
     if poder_de_ataque >= defesa_total:
-        print('\n💥 ATAQUE ACERTOU!')
+
+        print('\n💥 Ataque acertou!')
+        print('🎲 Calculando o dano...')
+        time.sleep(0.5)
+
+        print('🎲 Rolando D6...')
+        time.sleep(0.8)
         rolar_d6 = d6()
-        print(f'🎲 Rolando D6... Resultado: {rolar_d6}')
+        print(f'🎲 Resultado: {rolar_d6}')
+
         calculo_dano = atacante["Dano da Arma"] + rolar_d6
         print(
             f'⚔️  Dano da arma: {atacante["Dano da Arma"]} '
@@ -109,14 +132,15 @@ def atacar(atacante, alvo):
     else:
         print('\n❌ ATAQUE ERROU!')
 
-# Função Defender
+# Função Defender.
 def defender(heroi):
 
     print(f'\n🛡️  {heroi["Nome"]} escolheu defender.\n')
 
+    print('🎲 Rolando D8 para determinar o bônus de defesa...')
+    time.sleep(0.8)
     bonus_defesa = d8()
-
-    print(f'🎲 Rolando d8... Você tirou {bonus_defesa}!\n')
+    print(f'🎲 Resultado: {bonus_defesa}')
 
     defesa_base = heroi["Defesa"] + heroi["Classe de Armadura"]
 
@@ -128,34 +152,42 @@ def defender(heroi):
 
     return defesa_temporaria
 
-# Função Curar
+# Função Curar.
 def curar(heroi, mochilas):
 
     mochila_heroi = mochilas[heroi["Nome"]]
     quantidade_pocoes = mochila_heroi["Poção de Cura"]
 
-    if quantidade_pocoes > 0:
-        cura = 20
-        heroi["Pontos de Vida Atual"] += cura
-        if heroi["Pontos de Vida Atual"] > heroi["Pontos de Vida Maxima"]:
-            heroi["Pontos de Vida Atual"] = heroi["Pontos de Vida Maxima"]
-
-        mochila_heroi["Poção de Cura"] -= 1
-
-        print(f'\n❤️  {heroi["Nome"]} usou uma Poção de Cura!')
-        print(f'❤️  PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
-        print(f'🎒 Poções restantes: {mochila_heroi["Poção de Cura"]}\n')
-
-    else:
-
+    if quantidade_pocoes <= 0:
         print(f'\n⚠️  {heroi["Nome"]} não possui Poção de Cura!\n')
+        return
 
-# Função Fugir
+    if heroi["Pontos de Vida Atual"] == heroi["Pontos de Vida Maxima"]:
+        print(f'\n❤️  {heroi["Nome"]} já está com os PV máximos!')
+        print('🧪 A Poção de Cura não foi consumida.\n')
+        return
+
+    cura = 20
+    heroi["Pontos de Vida Atual"] += cura
+    if heroi["Pontos de Vida Atual"] > heroi["Pontos de Vida Maxima"]:
+        heroi["Pontos de Vida Atual"] = heroi["Pontos de Vida Maxima"]
+
+    mochila_heroi["Poção de Cura"] -= 1
+
+    print(f'\n❤️  {heroi["Nome"]} usou uma Poção de Cura!')
+    print(f'❤️  PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
+    print(f'🎒  Poções restantes: {mochila_heroi["Poção de Cura"]}\n')
+
+# Função Fugir.
 def fugir(heroi):
 
     print(f'\n🏃 {heroi["Nome"]} tentou escapar do combate...')
-    chance_fugir = d12()
+    time.sleep(0.5)
+
     print('🎲 O destino foi lançado...')
+    time.sleep(1)
+
+    chance_fugir = d12()
     print(f'Resultado: {chance_fugir}')
 
     if chance_fugir >= 9:
@@ -167,6 +199,7 @@ def fugir(heroi):
     print('Os inimigos fecharam o caminho. A batalha continua...')
     return False
 
+# Função drop de item.
 def drop_item(monstro, mochilas):
 
     nome_monstro = monstro["Nome"]
@@ -175,18 +208,21 @@ def drop_item(monstro, mochilas):
 
     print(f'\n🎁 Recompensa de {nome_monstro}')
     print(f'Chance base de drop: {chance_drop_base}%')
-    print('\n🎲 O destino decide a recompensa...')
-    
+    print('\n🎲 Rolando D4 para determinar o bônus de drop...')
+    time.sleep(0.8)
+
     rolar_d4 = d4()
-    print(f'Resultado do D4: {rolar_d4}')
+
+    print(f'🎲 Resultado: {rolar_d4}')
 
     bonus_drop = rolar_d4 * 25
     chance_drop = chance_drop_base + (chance_drop_base * bonus_drop / 100)
     print(f'Chance final de {item}: {chance_drop}%')
-    print('\n🎲 Rolando D20...')
-    rolar_d20 = d20()
+    print('\n🎲 Rolando D20 para verificar o drop...')
+    time.sleep(1)
 
-    print(f'Resultado: {rolar_d20}')
+    rolar_d20 = d20()
+    print(f'🎲 Resultado: {rolar_d20}')
     porcentagem_drop = rolar_d20 * 5
 
     if porcentagem_drop <= chance_drop:
