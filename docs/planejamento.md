@@ -5,11 +5,11 @@
 - [x] Criar heróis
 - [x] Criar monstros
 - [x] Sistema de dados
-- [ ] Sistema de ataque
-- [ ] Sistema de defesa
-- [ ] Sistema de cura
-- [ ] Sistema de fuga
-- [ ] Sistema de drops
+- [x] Sistema de ataque
+- [x] Sistema de defesa
+- [x] Sistema de cura
+- [x] Sistema de fuga
+- [x] Sistema de drops
 - [ ] Condição de vitória
 - [ ] Condição de derrota
 

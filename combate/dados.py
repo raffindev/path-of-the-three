@@ -15,3 +15,7 @@ def d8():
 # Dado 12 lados - usado para CALCULAR ATAQUE
 def d12():
     return randint(1, 12)    
+
+# Dado 20 lados - usado para CALCULAR ATAQUE
+def d20():
+    return randint(1, 20)    

@@ -1,4 +1,4 @@
-from combate.dados import d6, d8, d12
+from combate.dados import d4, d6, d8, d12, d20
 from itens.itens import poção_de_cura
 from random import choice, randint
 
@@ -17,7 +17,7 @@ def gerar_encontro(monstros_disponiveis):
     return monstros_batalha
 
 # Função Definir Ação
-def escolher_acao():
+def escolher_ação():
     print('''
     1 - Atacar
     2 - Defender
@@ -25,8 +25,8 @@ def escolher_acao():
     4 - Fugir
     ''')
 
-    escolha_acao = input('Qual será seu próximo movimento: ')
-    return escolha_acao
+    escolha_ação = input('Qual será seu próximo movimento: ')
+    return escolha_ação
 
 # Função Escolher Alvo
 def escolher_alvo(monstros_batalha):
@@ -69,6 +69,7 @@ def atacar(atacante, alvo):
     else:
         print('Ataque errou')
 
+# Função Defender
 def defender(heroi):
     print(f'\n{heroi["Nome"]} escolheu defender.')
 
@@ -82,6 +83,7 @@ def defender(heroi):
 
     return defesa_temporaria
 
+# Função Curar 
 def curar(heroi):
     print(f'{heroi["Nome"]} PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
     if heroi["Poções"] == 0:
@@ -103,3 +105,32 @@ def curar(heroi):
             heroi["Poções"] -= 1  
             print(f"Recuperou {cura} PV")
             print(F'PV {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}:')
+
+# Função Fugir.
+def fugir(heroi):
+    print(f'{heroi["Nome"]} tentou fugir...')
+    chance_fugir = d12()
+    print(f'Rolando d12...')
+    print(f'Você tirou {chance_fugir}.')
+    return chance_fugir >= 9
+
+def drop_item(monstros_batalha):
+    print(f'{monstros_batalha["Nome"]} tem {monstros_batalha["Drop Porcentagem"]} % de chance de drop.')
+    chance_drop_base = monstros_batalha["Drop Porcentagem"]
+
+    print(f'Rolando um D4 para determinar sua taxa de drop...')
+    rolar_d4 = d4()
+    print(f'Você tirou {rolar_d4} no dado!')
+
+    bonus_drop = rolar_d4 * 25
+    chance_drop = chance_drop_base + (chance_drop_base * bonus_drop / 100)
+
+    print(f'Sua chance de dropar {monstros_batalha["Drop"]} é de {chance_drop}%!')
+    rolar_d20 = d20()
+    print(f'Você tirou {rolar_d20} no dado!')
+
+    porcentagem_drop = rolar_d20 * 5
+    if porcentagem_drop <= chance_drop:
+        print(f'Drop confirmado! Você conseguiu {monstros_batalha["Drop"]}!')
+    else:
+        print(f'O drop não veio dessa vez...')

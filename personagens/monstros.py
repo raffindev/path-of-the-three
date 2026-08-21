@@ -23,7 +23,7 @@ goblin = {
     "Pontos de Vida Maxima": 35,
     "Pontos de Vida Atual": 35,
     "Drop": "Poção de Cura",
-    "Drop Porcentagem": 40
+    "Drop Porcentagem": 30
 }
 
 tipos_monstros = [
