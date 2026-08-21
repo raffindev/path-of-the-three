@@ -1,4 +1,5 @@
-from combate.dados import d6, d12
+from combate.dados import d6, d8, d12
+from itens.itens import poção_de_cura
 from random import choice, randint
 
 # Função Gerar encontro
@@ -67,3 +68,38 @@ def atacar(atacante, alvo):
             
     else:
         print('Ataque errou')
+
+def defender(heroi):
+    print(f'\n{heroi["Nome"]} escolheu defender.')
+
+    bonus_defesa = d8()
+
+    print(f'Rolando d8: Você tirou... {bonus_defesa}')
+    defesa_base = heroi["Defesa"] + heroi["Classe de Armadura"]
+    print(f'Heroi tem {defesa_base} de defesa base + bonus de defesa de: {bonus_defesa}')
+    defesa_temporaria = defesa_base + bonus_defesa
+    print(f'A defesa temporaria do heroi ficou: {defesa_temporaria}')
+
+    return defesa_temporaria
+
+def curar(heroi):
+    print(f'{heroi["Nome"]} PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
+    if heroi["Poções"] == 0:
+        print("Impossivel curar, o numero de poções é 0.")
+
+    else:
+        if heroi["Pontos de Vida Atual"] == heroi["Pontos de Vida Maxima"]:
+            print("Heroi com vida maxima, não é possivel utilizar o item.")
+
+        else:
+            dano_recebido = heroi["Pontos de Vida Maxima"] - heroi["Pontos de Vida Atual"]
+            print(f'{poção_de_cura["Nome"]}: {poção_de_cura["Cura"]}')
+            if dano_recebido < poção_de_cura["Cura"]:
+                cura = dano_recebido
+            else:
+                cura = poção_de_cura["Cura"]
+
+            heroi["Pontos de Vida Atual"] += cura
+            heroi["Poções"] -= 1  
+            print(f"Recuperou {cura} PV")
+            print(F'PV {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}:')

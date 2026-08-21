@@ -4,6 +4,8 @@ from personagens.herois import guerreiro
 from personagens.monstros import tipos_monstros
 from combate.ações import gerar_encontro
 from combate.batalha import turno_heroi
+from combate.ações import defender
+from combate.ações import curar
 
 
 monstros = gerar_encontro(tipos_monstros)
