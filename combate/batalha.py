@@ -61,7 +61,7 @@ def verificar_batalha(herois, mostros_batalha):
         return "continua"
 
 # fluxo da batalha
-def batalha(herois, monstros_batalha):
+def batalha(herois, monstros_batalha, mochilas):
     while True:
         for heroi in herois:
             if heroi["Pontos de Vida Atual"] > 0:
@@ -69,7 +69,7 @@ def batalha(herois, monstros_batalha):
                 resultado = verificar_batalha(herois, monstros_batalha)
                 if resultado == "vitoria":
                     for monstro in monstros_batalha:
-                        drop_item(monstro)
+                        drop_item(monstro, mochilas)
                     return
 
                 if resultado == "derrota":
@@ -83,7 +83,7 @@ def batalha(herois, monstros_batalha):
         resultado = verificar_batalha(herois, monstros_batalha)
         if resultado == "vitoria":
             for monstro in monstros_batalha:
-                drop_item(monstro)
+                drop_item(monstro, mochilas)
             return
 
         if resultado == "derrota":
