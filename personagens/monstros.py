@@ -1,7 +1,7 @@
     # Criação dos Monstros
 
 slime = {
-    "Raça": "Slime",
+    "Nome": "Slime",
     "Força": 2,
     "Arma": "Corpo",
     "Dano da Arma": 3,
@@ -14,7 +14,7 @@ slime = {
 }
 
 goblin = {
-    "Raça": "Goblin",
+    "Nome": "Goblin",
     "Força": 4,
     "Arma": "Cimitarra",
     "Dano da Arma": 4,
