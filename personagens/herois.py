@@ -1,4 +1,4 @@
-    # Criação dos 3 heróis principais da história
+# Criação dos 3 heróis principais da história.
 
 guerreiro = {
     "Nome": "Thorgar",

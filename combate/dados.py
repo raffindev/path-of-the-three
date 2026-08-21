@@ -1,21 +1,21 @@
 from random import randint
 
-# Dado 4 lados - usado para DROP e DANO de ARMAS FRACAS
+# Dado 4 lados - usado para DROP e DANO de ARMAS FRACAS.
 def d4():
     return randint(1, 4)
 
-# Dado 6 lados - usado para ação de DANO de ARMAS MÉDIAS
+# Dado 6 lados - usado para ação de DANO de ARMAS MÉDIAS.
 def d6():
     return randint(1, 6)
 
-# Dado 8 lados - usado para ação de DANO de ARMAS FORTES - usado para DEFESA tambem
+# Dado 8 lados - usado para dano de armas fortes e defesa.
 def d8():
     return randint(1, 8)
 
-# Dado 12 lados - usado para CALCULAR ATAQUE
+# Dado 12 lados - usado para calcular o ataque.
 def d12():
     return randint(1, 12)    
 
-# Dado 20 lados - usado para DROP
+# Dado 20 lados - usado para drop.
 def d20():
     return randint(1, 20)    

@@ -1,45 +1,61 @@
 from combate.ações import escolher_ação, escolher_alvo, gerar_encontro
 from combate.ações import atacar, defender, curar, fugir, drop_item
+from itens.mochilas import mochilas
+from utils.validações import cabeçalho
 from random import choice
 
-# Estrutura inicio da batalha
+# Estrutura início da batalha
 def iniciar_batalha(herois, monstros_disponiveis):
-    monstros_batalha = gerar_encontro(monstros_disponiveis)
-    print('')
-    print('='*5, 'BATALHA', '='*5)
 
+    monstros_batalha = gerar_encontro(monstros_disponiveis)
+    print(cabeçalho("BATALHA"))
+
+    print("\nHeróis:")
     for i, heroi in enumerate(herois, start=1):
         print(f'{i} - {heroi["Nome"]}')
-    print(f'A batalha começou!')
+
+    print('\n⚔️  A batalha começou!')
 
     return monstros_batalha
 
 # Estrutura de batalha - Turno do heroi
-def turno_heroi(heroi, monstros_batalha):
-    print(f'\nTurno do {heroi["Nome"]}')
+def turno_heroi(heroi, monstros_batalha, mochilas):
+
+    print(f'\n⚔️  TURNO DE {heroi["Nome"].upper()}')
     ação = escolher_ação()
 
     if ação == "1":
-        print("\nAção escolhida: 1 - Atacar")
-        
+        print("\n⚔️  Ação escolhida: Atacar")
         numero, alvo = escolher_alvo(monstros_batalha)
         atacar(heroi, alvo)
 
     elif ação == "2":
-        defender(heroi)
+        print("\n🛡️  Ação escolhida: Defender")
+        defesa_temporaria = defender(heroi)
+        return "defesa", defesa_temporaria
 
     elif ação == "3":
-        curar(heroi)
+        print("\n❤️ Ação escolhida: Curar")
+        curar(heroi, mochilas)
 
     elif ação == "4":
-        fugir(heroi)
+        print("\n🏃 Ação escolhida: Fugir")
+
+        if fugir(heroi):
+            return "fugiu"
 
 # Turno dos monstros
 def turno_monstros(monstros_batalha, herois):
+
     for monstro in monstros_batalha:
         if monstro["Pontos de Vida Atual"] > 0:
-            print(f'\nTurno do {monstro["Nome"]}')
-            herois_vivos = [heroi for heroi in herois if heroi["Pontos de Vida Atual"] > 0]
+            print(f'\n👹 TURNO DO {monstro["Nome"].upper()}')
+            herois_vivos = [
+                heroi
+                for heroi in herois
+                if heroi["Pontos de Vida Atual"] > 0
+            ]
+
             heroi_alvo = choice(herois_vivos)
             atacar(monstro, heroi_alvo)
             resultado = verificar_batalha(herois, monstros_batalha)
@@ -47,45 +63,60 @@ def turno_monstros(monstros_batalha, herois):
                 break
 
 # Verificar se ainda esta batalhando
-def verificar_batalha(herois, mostros_batalha):
-    vitoria = all(monstro["Pontos de Vida Atual"] == 0 for monstro in mostros_batalha)
-    derrota = all(heroi["Pontos de Vida Atual"] == 0 for heroi in herois)
-    if vitoria:
-        print('Vitória, Vocês venceram')
-        return "vitoria"
-    elif derrota:
-        print('infelizmente todos heróis morreram')
-        return "derrota"
-    else:
-        print('A batalha continua')
-        return "continua"
+def verificar_batalha(herois, monstros_batalha):
 
-# fluxo da batalha
+    vitoria = all(monstro["Pontos de Vida Atual"] == 0 for monstro in monstros_batalha)
+    derrota = all(heroi["Pontos de Vida Atual"] == 0 for heroi in herois)
+
+    if vitoria:
+        print(cabeçalho("VITÓRIA"))
+        print("🏆 Todos os inimigos foram derrotados!")
+        print("Vocês venceram a batalha!")
+        return "vitoria"
+
+    if derrota:
+        print(cabeçalho("DERROTA"))
+        print("💀 Todos os heróis foram derrotados.")
+        print("A aventura termina aqui.")
+        return "derrota"
+
+    return "continua"
+
+# Fluxo da batalha
 def batalha(herois, monstros_batalha, mochilas):
+
     while True:
+        herois_defendendo = []
+
+        # Turno dos heróis
         for heroi in herois:
             if heroi["Pontos de Vida Atual"] > 0:
-                turno_heroi(heroi, monstros_batalha)
+                resultado_turno = turno_heroi(heroi, monstros_batalha, mochilas)
+                if resultado_turno == "fugiu":
+                    return
+                if resultado_turno and resultado_turno[0] == "defesa":
+                    defesa_original = heroi["Defesa"]
+                    heroi["Defesa"] = resultado_turno[1]
+                    herois_defendendo.append((heroi, defesa_original))
+
                 resultado = verificar_batalha(herois, monstros_batalha)
                 if resultado == "vitoria":
                     for monstro in monstros_batalha:
                         drop_item(monstro, mochilas)
                     return
-
                 if resultado == "derrota":
                     return
 
-        resultado = verificar_batalha(herois, monstros_batalha)
-        if resultado != 'continua':
-            break
-        
+        # Turno dos monstros
         turno_monstros(monstros_batalha, herois)
         resultado = verificar_batalha(herois, monstros_batalha)
         if resultado == "vitoria":
             for monstro in monstros_batalha:
                 drop_item(monstro, mochilas)
             return
-
         if resultado == "derrota":
             return
-    
+
+        # Remove a defesa temporária
+        for heroi, defesa_original in herois_defendendo:
+            heroi["Defesa"] = defesa_original

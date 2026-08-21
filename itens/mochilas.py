@@ -1,3 +1,5 @@
+# Mochilas.
+
 mochilas = {
     "Thorgar": {
         "Poção de Cura": 1

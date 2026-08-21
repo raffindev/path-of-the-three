@@ -1,4 +1,4 @@
-    # Criação dos Monstros
+# Criação dos monstros.
 
 slime = {
     "Nome": "Slime",

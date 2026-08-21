@@ -10,7 +10,7 @@
 - [x] Sistema de cura
 - [x] Sistema de fuga
 - [x] Sistema de drops
-- [ ] Condição de vitória
-- [ ] Condição de derrota
+- [x] Condição de vitória
+- [x] Condição de derrota
 
 ## Upgrades posteriormente
