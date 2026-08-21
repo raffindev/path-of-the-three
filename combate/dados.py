@@ -16,6 +16,6 @@ def d8():
 def d12():
     return randint(1, 12)    
 
-# Dado 20 lados - usado para CALCULAR ATAQUE
+# Dado 20 lados - usado para DROP
 def d20():
     return randint(1, 20)    

@@ -1,13 +1,10 @@
 # Teste de fluxo de ataque.
 
-from personagens.herois import guerreiro
-from personagens.monstros import tipos_monstros
-from combate.ações import gerar_encontro
-from combate.batalha import turno_heroi
-from combate.ações import defender
-from combate.ações import curar
+from personagens.herois import grupo_herois
+from personagens.monstros import tipos_monstros, goblin, slime
+from combate.ações import gerar_encontro, defender, curar
+from combate.batalha import turno_heroi, iniciar_batalha, batalha, turno_monstros
 
+monstros_batalha = iniciar_batalha(grupo_herois, tipos_monstros)
 
-monstros = gerar_encontro(tipos_monstros)
-
-turno_heroi(guerreiro, monstros)
+batalha(grupo_herois, monstros_batalha)

@@ -1,6 +1,10 @@
 from combate.dados import d4, d6, d8, d12, d20
 from itens.itens import poção_de_cura
+from itens.mochilas import mochilas
 from random import choice, randint
+
+def cabeçalho(txt):
+    return '='*40 + '\n' + txt.center(40) + '\n' + '='*40
 
 # Função Gerar encontro
 def gerar_encontro(monstros_disponiveis):
@@ -30,13 +34,15 @@ def escolher_ação():
 
 # Função Escolher Alvo
 def escolher_alvo(monstros_batalha):
-    print('='*5, 'INIMIGOS', '='*5,'\n') 
-    for i, monstro in enumerate(monstros_batalha, start=1):
-        print(f'{i} - {monstro["Nome"]}')
+    monstros_vivos = [monstro for monstro in monstros_batalha if monstro["Pontos de Vida Atual"] > 0]
 
+    print('=' * 5, 'INIMIGOS', '=' * 5, '\n')
+    for i, monstro in enumerate(monstros_vivos, start=1):
+        print(f'{i} - {monstro["Nome"]}')
     grupo_monstro = int(input('\nEscolha seu Alvo: '))
-    if 1 <= grupo_monstro <= len(monstros_batalha):
-        monstro_alvo = monstros_batalha[grupo_monstro - 1]
+
+    if 1 <= grupo_monstro <= len(monstros_vivos):
+        monstro_alvo = monstros_vivos[grupo_monstro - 1]
         print(f'\nAlvo escolhido: {monstro_alvo["Nome"]} {grupo_monstro}')
         return grupo_monstro, monstro_alvo
 
@@ -61,10 +67,10 @@ def atacar(atacante, alvo):
         print(f'Somando o dano da arma: {atacante["Dano da Arma"]} + o d6: {rolar_d6} seu dano foi de: {calculo_dano}')
         alvo["Pontos de Vida Atual"] -= calculo_dano
         print(f'\n{alvo["Nome"]} sofreu {calculo_dano} de dano.')
-        print(f'PV: {alvo["Pontos de Vida Atual"]} / {alvo["Pontos de Vida Maxima"]}')
         if alvo["Pontos de Vida Atual"] <= 0:
             alvo["Pontos de Vida Atual"] = 0
             print(f'{alvo["Nome"]} derrotado.')
+        print(f'PV: {alvo["Pontos de Vida Atual"]} / {alvo["Pontos de Vida Maxima"]}')
             
     else:
         print('Ataque errou')
@@ -84,27 +90,23 @@ def defender(heroi):
     return defesa_temporaria
 
 # Função Curar 
-def curar(heroi):
-    print(f'{heroi["Nome"]} PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
-    if heroi["Poções"] == 0:
-        print("Impossivel curar, o numero de poções é 0.")
+def curar(heroi, mochilas):
+    mochila_heroi = mochilas[heroi["Nome"]]
+    quantidade_pocoes = mochila_heroi["Poção de Cura"]
 
+    if quantidade_pocoes > 0:
+        cura = 20
+        heroi["Pontos de Vida Atual"] += cura
+
+        if heroi["Pontos de Vida Atual"] > heroi["Pontos de Vida Maxima"]:
+            heroi["Pontos de Vida Atual"] = heroi["Pontos de Vida Maxima"]
+        mochila_heroi["Poção de Cura"] -= 1
+
+        print(f'{heroi["Nome"]} usou uma Poção de Cura!')
+        print(f'PV: {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}')
+        print(f'Poções restantes: {mochila_heroi["Poção de Cura"]}')
     else:
-        if heroi["Pontos de Vida Atual"] == heroi["Pontos de Vida Maxima"]:
-            print("Heroi com vida maxima, não é possivel utilizar o item.")
-
-        else:
-            dano_recebido = heroi["Pontos de Vida Maxima"] - heroi["Pontos de Vida Atual"]
-            print(f'{poção_de_cura["Nome"]}: {poção_de_cura["Cura"]}')
-            if dano_recebido < poção_de_cura["Cura"]:
-                cura = dano_recebido
-            else:
-                cura = poção_de_cura["Cura"]
-
-            heroi["Pontos de Vida Atual"] += cura
-            heroi["Poções"] -= 1  
-            print(f"Recuperou {cura} PV")
-            print(F'PV {heroi["Pontos de Vida Atual"]} / {heroi["Pontos de Vida Maxima"]}:')
+        print(f'{heroi["Nome"]} não possui Poção de Cura!')
 
 # Função Fugir.
 def fugir(heroi):
@@ -114,23 +116,27 @@ def fugir(heroi):
     print(f'Você tirou {chance_fugir}.')
     return chance_fugir >= 9
 
-def drop_item(monstros_batalha):
-    print(f'{monstros_batalha["Nome"]} tem {monstros_batalha["Drop Porcentagem"]} % de chance de drop.')
-    chance_drop_base = monstros_batalha["Drop Porcentagem"]
+# Drop de item
+def drop_item(monstro, mochilas):
+    print(f'{monstro["Nome"]} tem {monstro["Drop Porcentagem"]} % de chance de drop.')
+    chance_drop_base = monstro["Drop Porcentagem"]
 
-    print(f'Rolando um D4 para determinar sua taxa de drop...')
+    print('Rolando um D4 para determinar sua taxa de drop...')
     rolar_d4 = d4()
     print(f'Você tirou {rolar_d4} no dado!')
 
     bonus_drop = rolar_d4 * 25
     chance_drop = chance_drop_base + (chance_drop_base * bonus_drop / 100)
+    print(f'Sua chance de dropar {monstro["Drop"]} é de {chance_drop}%!')
 
-    print(f'Sua chance de dropar {monstros_batalha["Drop"]} é de {chance_drop}%!')
     rolar_d20 = d20()
     print(f'Você tirou {rolar_d20} no dado!')
-
     porcentagem_drop = rolar_d20 * 5
+
     if porcentagem_drop <= chance_drop:
-        print(f'Drop confirmado! Você conseguiu {monstros_batalha["Drop"]}!')
+        heroi = choice(list(mochilas.keys()))
+        mochilas[heroi][monstro["Drop"]] += 1
+        print(f'Drop confirmado! Você conseguiu {monstro["Drop"]}!')
+        print(f'O item foi para a mochila de {heroi}.')
     else:
-        print(f'O drop não veio dessa vez...')
+        print('💀 O drop não veio dessa vez...')

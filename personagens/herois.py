@@ -10,7 +10,6 @@ guerreiro = {
     "Classe de Armadura": 4,
     "Pontos de Vida Maxima": 65,
     "Pontos de Vida Atual": 65,
-    "Poções": 1
 }
 
 arqueiro = {
@@ -23,7 +22,6 @@ arqueiro = {
     "Classe de Armadura": 2,
     "Pontos de Vida Maxima": 50,
     "Pontos de Vida Atual": 50,
-    "Poções": 0
 }
 
 anão = {
@@ -36,7 +34,6 @@ anão = {
     "Classe de Armadura": 4,
     "Pontos de Vida Maxima": 70,
     "Pontos de Vida Atual": 70,
-    "Poções": 2
 }
 
 grupo_herois = [
